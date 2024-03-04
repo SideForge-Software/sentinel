@@ -1,0 +1,1 @@
+FROM redis:7.2.1-alpine3.18

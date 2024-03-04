@@ -35,7 +35,7 @@ jobs:
 
   deploy:
 
-    runs-on: nomobot
+    runs-on: sentinel
     needs: build
 
     steps:
