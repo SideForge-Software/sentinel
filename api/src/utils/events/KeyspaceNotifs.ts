@@ -2,6 +2,7 @@
 import axios from "axios";
 import * as Redis from "redis";
 import { blocked_servers, redis } from "../..";
+import { write_to_logs } from "../cache/Logger";
 
 /**
  * Look for any events that have a key space notation for redis
@@ -26,15 +27,19 @@ export function KeyspaceNotif(e: any, r: any): void {
 
                     for (let i: number = 0; i < serverNames.length; i++) {
 
-                        const banLink: string = `https://${serverNames[i]}.sploop.io/ws/banLog_BYIUSNNKR51P`;
-                        const { data } = await axios.get(banLink);
+                        try {
+                            const banLink: string = `https://${serverNames[i]}.sploop.io/ws/banLog_BYIUSNNKR51P`;
+                            const { data } = await axios.get(banLink);
 
-                        await redis.set(
-                            `ban-logs:${serverNames[i]}`,
-                            JSON.stringify(data),
-                            "EX",
-                            60
-                        );
+                            await redis.set(
+                                `ban-logs:${serverNames[i]}`,
+                                JSON.stringify(data),
+                                "EX",
+                                60
+                            );
+                        } catch(e) {
+                            write_to_logs("errors", `Error when fetching ban logs: ${serverNames[i]}`);
+                        }
 
                     }
 
