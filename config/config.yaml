@@ -1,2 +1,29 @@
 
 
+supabase:
+
+  provider:
+    name: discord
+    expire_token: 172800 # 2 days
+    store_unique_by_id: true
+
+  dev:
+    url: https://wnnjduqkmchhdgqefssp.supabase.co
+    anon_public_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndubmpkdXFrbWNoaGRncWVmc3NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk1MzU3ODAsImV4cCI6MjAyNTExMTc4MH0.HNuIJh-NALAu3o8LrEKIAskm2qSS-P5K4jfB4kAznYM
+    secret_service: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndubmpkdXFrbWNoaGRncWVmc3NwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTUzNTc4MCwiZXhwIjoyMDI1MTExNzgwfQ.wby8xC3cjSueeNjHoeXQrscYc9DNTCBz0Yo42o5YoxY
+  prod:
+    url: https://wnnjduqkmchhdgqefssp.supabase.co
+    anon_public_key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndubmpkdXFrbWNoaGRncWVmc3NwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDk1MzU3ODAsImV4cCI6MjAyNTExMTc4MH0.HNuIJh-NALAu3o8LrEKIAskm2qSS-P5K4jfB4kAznYM
+    secret_service: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndubmpkdXFrbWNoaGRncWVmc3NwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcwOTUzNTc4MCwiZXhwIjoyMDI1MTExNzgwfQ.wby8xC3cjSueeNjHoeXQrscYc9DNTCBz0Yo42o5YoxY
+
+server:
+  port: 3001
+  host: "localhost"
+  api_path: "api"
+
+  bandwith_limit: "1000mb"
+  cors: {
+    origin: "*"
+  }
+  url_encoded: true
+  prod_api_url: "https://sentinelmod.com"
