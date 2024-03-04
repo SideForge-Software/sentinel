@@ -27,3 +27,63 @@ server:
   }
   url_encoded: true
   prod_api_url: "https://sentinelmod.com"
+
+security:
+  # api_password: "HV3unLo!PxPvHpmm$@5qM5XJpxXb7pxVv#pXn!DYXFibch#An9**n5!cuUg2Fz*cR5f@!LgMWKFvZFWozh3!J*&xshARCw4qUYWbRsgDir!Cc3s!K@eL$7LMiFpXd@VA"
+
+  ratelimit:
+    enabled: false
+
+    # Scoring
+    high_z_score: 1.96 # how far above average the requests are 
+    low_z_score: -1.96 # how far below average the requests are 
+    
+    # Collecting how many requests each individual user makes per hour
+    collection:
+
+      - key: "hourly-request-collector"
+        elapsed_duration: 3600 # 1 hour
+        unique_to_request: true
+
+      - key: "daily-request-collector"
+        elapsed_duration: 3600
+        unique_to_request: false
+    
+
+  end_end_auth:
+    endpoints:
+      # - "dashboard"
+
+    restrict:
+      error_found: true
+      no_user_found: true
+      invalid_user_id: true
+      no_user_id_found: true
+
+database:
+
+  postgresql:
+
+    dev:
+      host: "localhost"
+      port: 5432
+      database: "nomobot"
+      user: "postgres"
+      password: "BS103261"
+      url: 
+    prod:
+      host: "localhost"
+      port: 5432
+      database: "nomobot"
+      user: "postgres"
+      password: "BS103261"
+
+  redis:
+    dev:
+      port: 6379
+      host: localhost
+      url: null
+    prod:
+      port: 6379
+      host: localhost
+      url: null
