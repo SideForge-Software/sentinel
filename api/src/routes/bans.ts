@@ -16,7 +16,7 @@ router.get("/logs/:server", async (req: express.Request, res: express.Response) 
     // Get the actual cache from redis
     const bans: any = JSON.parse(await redis.get(`ban-logs:${params.server}`));
 
-    res.json(bans);
+    res.send(JSON.stringify(bans, null, 4));
 
 }); 
 
