@@ -1,7 +1,7 @@
 
 import axios from "axios";
 import * as Redis from "redis";
-import { blocked_servers, redis } from "../..";
+import { blocked_servers, config, ratelimit_adapter, redis } from "../..";
 import { write_to_logs } from "../cache/Logger";
 
 /**
@@ -28,17 +28,23 @@ export function KeyspaceNotif(e: any, r: any): void {
                     for (let i: number = 0; i < serverNames.length; i++) {
 
                         try {
-                            const banLink: string = `https://${serverNames[i]}.sploop.io/ws/banLog_BYIUSNNKR51P`;
+                            // Fetch bans through the API
+                            // Hopefully we don't get rate limited lmao
+                            const banLink: string = `https://${serverNames[i]}.sploop.io/${config.third_party_endpoints.sploop.ban_logs}`;
                             const { data } = await axios.get(banLink);
 
                             await redis.set(
                                 `ban-logs:${serverNames[i]}`,
                                 JSON.stringify(data),
                                 "EX",
-                                60
+                                ratelimit_adapter.base.bans
                             );
                         } catch(e) {
                             write_to_logs("errors", `Error when fetching ban logs: ${serverNames[i]}`);
+
+                            // Try our best to prevent the rate limiting
+                            ratelimit_adapter.base.bans += ratelimit_adapter.increment;
+                            write_to_logs("actions", `Set ban fetch interval to ${ratelimit_adapter.base.bans} seconds!`);
                         }
 
                     }
