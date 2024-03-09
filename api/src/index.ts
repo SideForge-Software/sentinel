@@ -29,6 +29,17 @@ export const supabase: any = createClient((getSupabaseCredentials()).url, (getSu
       persistSession: false
     }
 });
+
+// prevent sploop from rate limiting sentinel
+export const ratelimit_adapter = {
+    // These are all in seconds
+    increment: 5,
+    base: {
+        bans: 60,
+        players: 10
+    }
+}
+
 export const ratelimit: RateLimiter = new RateLimiter();
 export const blocked_servers: any = {
     sgp: false,
@@ -39,7 +50,9 @@ export const blocked_servers: any = {
     sca2: false,
     sgp1ffa: false,
     fra1ffa: false,
-    ca1ffa: false
+    ca1ffa: false,
+    FR1EVENT: false,
+    CA1EVENT: false
 }
 
 app.set("trust proxy");
@@ -54,6 +67,19 @@ app.use(ConnectionMiddleware)
 
 RouteLoader(app);
 
+// Catch unrecognized errors, try catch only works if the app's process isn't eliminated
+process.on("uncaughtException", (err, og) => {
+
+    write_to_logs("errors", `Error uncaught: ${err} ${og}`);
+
+    // We're automatically going to assume that the ban API has been triggered
+    // So we're going to increase the ban API
+    
+    ratelimit_adapter.base.bans += ratelimit_adapter.increment;
+    write_to_logs("actions", `Set ban fetch interval to ${ratelimit_adapter.base.bans} seconds!`);
+
+});
+
 app.listen(config.server.port, config.server.host, async () => {
 
     // For PROD, do not edit
@@ -66,18 +92,20 @@ app.listen(config.server.port, config.server.host, async () => {
 
     // For the times for caching
 
+    // Gonna go ahead and get all the servers right off the bat, allowing us to accurately depict averages / stats
     const serverNames: Array<string> = Object.keys(blocked_servers);
 
     for (let i: number = 0; i < serverNames.length; i++) {
 
-        const banLink: string = `https://${serverNames[i]}.sploop.io/ws/banLog_BYIUSNNKR51P`;
+        // Get the ban logs here
+        const banLink: string = `https://${serverNames[i]}.sploop.io/${config.third_party_endpoints.sploop.ban_logs}`;
         const { data } = await axios.get(banLink);
 
         await redis.set(
             `ban-logs:${serverNames[i]}`,
             JSON.stringify(data),
             "EX",
-            120
+            ratelimit_adapter.base.bans
         );
 
     }
