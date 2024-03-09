@@ -77,7 +77,7 @@ app.listen(config.server.port, config.server.host, async () => {
             `ban-logs:${serverNames[i]}`,
             JSON.stringify(data),
             "EX",
-            60
+            120
         );
 
     }
